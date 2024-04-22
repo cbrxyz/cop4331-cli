@@ -37,9 +37,14 @@ public class Scenarios {
      *  - {@code right: <your integer type>}
      */
     private static Map<String, Object> add(String arguments) {
-        //TODO: Parse arguments and extract values.
-        int left = 0; //or BigInteger, etc.
-        int right = 0;
+        Parser parser = new Parser();
+        IntParameter leftParam = new IntParameter("left", true, 0);
+        IntParameter rightParam = new IntParameter("right", true, 1);
+        parser.addParam(leftParam);
+        parser.addParam(rightParam);
+        parser.parse(arguments);
+        int left = leftParam.getParsedValue();
+        int right = rightParam.getParsedValue();
         return Map.of("left", left, "right", right);
     }
 
