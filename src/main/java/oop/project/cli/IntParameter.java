@@ -6,11 +6,12 @@ public class IntParameter extends Parameter<Integer> {
     }
 
     @Override
-    public void parse(String rawInput) {
+    public void parse() {
+        Token t = InputReader.getInstance().next();
         try {
-            this.parsed = Integer.parseInt(rawInput);
+            this.parsed = Integer.parseInt(t.toString());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Unexpected input: " + rawInput);
+            throw new IllegalArgumentException("Unexpected input: " + t);
         }
     }
 }
