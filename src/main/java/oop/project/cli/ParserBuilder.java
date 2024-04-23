@@ -32,10 +32,12 @@ public class ParserBuilder {
     }
     private static class NamedParamToken {
         String name;
+        boolean required;
         Parser p;
-        public NamedParamToken(String name, Parser p) {
+        public NamedParamToken(String name, boolean required, Parser p) {
             this.p = p;
             this.name = name;
+            this.required = required;
         }
     }
     private final PriorityQueue<ParameterToken<?>> params;
@@ -58,8 +60,8 @@ public class ParserBuilder {
         return this;
     }
 
-    public ParserBuilder AddNamedParameter(String name, Parser p) {
-        namedParams.add(new NamedParamToken(name, p));
+    public ParserBuilder AddNamedParameter(String name, boolean required, Parser p) {
+        namedParams.add(new NamedParamToken(name, required, p));
         return this;
     }
 
@@ -88,7 +90,7 @@ public class ParserBuilder {
             parser.addFlag(new Flag(flag));
         }
         for (NamedParamToken npt : namedParams) {
-            parser.addNamedParam(new NamedParameter(npt.name, npt.p));
+            parser.addNamedParam(new NamedParameter(npt.name, npt.required, npt.p));
         }
         return parser;
     }
