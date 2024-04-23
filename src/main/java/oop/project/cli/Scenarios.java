@@ -38,13 +38,6 @@ public class Scenarios {
      *  - {@code left: <your integer type>}
      *  - {@code right: <your integer type>}
      */
-
-//    private static Map<String, Object> add(String arguments) {
-//        //TODO: Parse arguments and extract values.
-//        int left = 0; //or BigInteger, etc.
-//        int right = 0;
-//        return Map.of("left", left, "right", right);
-//    }
     private static Map<String, Object> add(String arguments) {
         Parser parser = new ParserBuilder()
                 .AddParameter("left", true, 0, ParserBuilder.INT)
@@ -64,12 +57,6 @@ public class Scenarios {
      *  - {@code right: <your decimal type>} (required)
      */
 
-//    static Map<String, Object> sub(String arguments) {
-//        //TODO: Parse arguments and extract values.
-//        Optional<Double> left = Optional.empty();
-//        double right = 0.0;
-//        return Map.of("left", left, "right", right);
-//    }
     static Map<String, Object> sub(String arguments) {
         Parser parser = new ParserBuilder()
                 .AddNamedParameter("left", false, new ParserBuilder()
@@ -94,11 +81,6 @@ public class Scenarios {
      * Takes one positional argument:
      *  - {@code number: <your integer type>} where {@code number >= 0}
      */
-//    static Map<String, Object> sqrt(String arguments) {
-//        //TODO: Parse arguments and extract values.
-//        int number = 0;
-//        return Map.of("number", number);
-//    }
     static Map<String, Object> sqrt(String arguments) {
         Parser parser = new ParserBuilder()
                 .AddParameter("num", true, 0, ParserBuilder.INT)
@@ -114,27 +96,19 @@ public class Scenarios {
      *     - Note: Not all projects support subcommands, but if yours does you
      *       may want to take advantage of this scenario for that.
      */
-
-//    static Map<String, Object> calc(String arguments) {
-//        //TODO: Parse arguments and extract values.
-//        String subcommand = "";
-//        return Map.of("subcommand", subcommand);
-//    }
     static Map<String, Object> calc(String arguments) {
-        //TODO: Parse arguments and extract values.
-
-        Parser parser = new Parser();
-        StringParameter subArg = new StringParameter("subArg", false, 0);
-        parser.addParam(subArg);
+        Parser parser = new ParserBuilder()
+                .AddParameter("calcArg", false, 0, ParserBuilder.STRING)
+                .build();
         parser.parse(arguments);
 
-        Optional<String> subcommand = Optional.empty();
-        if (subArg.getParsedValue() != null) {
-            subcommand = Optional.of(subArg.getParsedValue());
+        if (parser.getParam("calcArg",ParserBuilder.STRING).getParsedValue() != null) {
+            String subcommand = parser.getParam("calcArg",ParserBuilder.STRING).getParsedValue();
+            return Map.of("subcommand", subcommand);
         }
+        return Map.of("subcommand", Optional.empty());
 
 //        String subcommand = subArg.getParsedValue();
-        return Map.of("subcommand", subcommand);
     }
 
     /**
