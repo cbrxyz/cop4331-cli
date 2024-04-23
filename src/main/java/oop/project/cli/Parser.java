@@ -31,10 +31,10 @@ public class Parser {
         return namedParams.get(name);
     }
 
-    public IntParameter getIntParam(String name) {
+    public <T extends Parameter<?>> T getParam(String name, Class<T> type) {
         for (Parameter p : parameters) {
-            if (p instanceof IntParameter && name.equals(p.getName())) {
-                return (IntParameter)p;
+            if (type.isInstance(p) && name.equals(p.getName())) {
+                return (T)p;
             }
         }
         return null;
