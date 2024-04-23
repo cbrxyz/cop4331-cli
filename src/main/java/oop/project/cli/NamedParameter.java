@@ -3,8 +3,8 @@ package oop.project.cli;
 public class NamedParameter extends Component<Parser> {
     boolean given = false;
 
-    public NamedParameter(String name, Parser parser) {
-        super(name, false);
+    public NamedParameter(String name, boolean required, Parser parser) {
+        super(name, required);
         parsed = parser;
     }
 

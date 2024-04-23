@@ -14,7 +14,7 @@ public class Main {
                 .AddParameter("x", true, 1, ParserBuilder.DOUBLE)
                 .AddParameter("y", true, 2, ParserBuilder.INT)
                 .AddParameter("z", true, 3, ParserBuilder.INT)
-                .AddNamedParameter("method", new ParserBuilder()
+                .AddNamedParameter("method", true, new ParserBuilder()
                         .AddParameter("m", true, 0, ParserBuilder.INT)
                         .build())
                 .AddParameter("epoch", true, 4, ParserBuilder.LOCAL_DATE)

@@ -1,21 +1,24 @@
 package oop.project.cli;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Parser {
-    ArrayList<Parameter> parameters;
-    Map<String, Flag> flags;
-    Map<String, NamedParameter> namedParams;
+    private final ArrayList<Parameter<?>> parameters;
+    private final Map<String, Flag> flags;
+    private final Map<String, NamedParameter> namedParams;
+    private final ArrayList<Integer> parsedParams;
 
     Parser() {
         parameters = new ArrayList<>();
         flags = new HashMap<>();
         namedParams = new HashMap<>();
+        parsedParams = new ArrayList<>();
     }
 
-    void addParam(Parameter param) {
+    void addParam(Parameter<?> param) {
         parameters.add(param);
     }
 
@@ -40,7 +43,7 @@ public class Parser {
         return null;
     }
 
-    void parse(String input) {// base call
+    public void parse(String input) {// base call
         // First, split by space
         String[] parts = input.split(" ");
         new InputReader(parts);
@@ -55,7 +58,24 @@ public class Parser {
         for (int i = 0; i < (parameters.size() + flags.size() + namedParams.size()); i++) {
             Token t = reader.peekNext();
             if (t == null) {
-                throw new IllegalArgumentException("Expected argument and did not receive it.");
+                for (int j = 0; j < parameters.size(); j++) {
+                    if (!parameters.get(j).isRequired()) continue;
+                    boolean found = false;
+                    for (int k = 0; k < parsedParams.size(); k++) {
+                        if (j == parsedParams.get(k)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        throw new IllegalArgumentException("Expected argument and did not receive it.");
+                    }
+                }
+                for (String name : namedParams.keySet()) {
+                    if (namedParams.get(name).isRequired() && !namedParams.get(name).given) {
+                        throw new IllegalArgumentException("Expected argument and did not receive it.");
+                    }
+                }
             }
             String part = t.toString();
             if (part.startsWith("--")) {
@@ -74,7 +94,11 @@ public class Parser {
                 }
             } else {
                 // This is a parameter
+                if (parameters.size() <= paramIndex) {
+                    throw new IllegalArgumentException("Was not expecting positional parameter!");
+                }
                 parameters.get(paramIndex).parse();
+                parsedParams.add(paramIndex);
                 paramIndex++;
             }
         }
