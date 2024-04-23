@@ -46,14 +46,13 @@ public class Scenarios {
 //        return Map.of("left", left, "right", right);
 //    }
     private static Map<String, Object> add(String arguments) {
-        Parser parser = new Parser();
-        IntParameter leftParam = new IntParameter("left", true, 0);
-        IntParameter rightParam = new IntParameter("right", true, 1);
-        parser.addParam(leftParam);
-        parser.addParam(rightParam);
+        Parser parser = new ParserBuilder()
+                .AddParameter("left", true, 0, ParserBuilder.INT)
+                .AddParameter("right", true, 1, ParserBuilder.INT)
+                .build();
         parser.parse(arguments);
-        int left = leftParam.getParsedValue();
-        int right = rightParam.getParsedValue();
+        int left = parser.getParam("left",ParserBuilder.INT).getParsedValue();
+        int right = parser.getParam("right",ParserBuilder.INT).getParsedValue();
         return Map.of("left", left, "right", right);
     }
 
@@ -102,12 +101,11 @@ public class Scenarios {
 //        return Map.of("number", number);
 //    }
     static Map<String, Object> sqrt(String arguments) {
-        //TODO: Parse arguments and extract values.
-        Parser parser = new Parser();
-        IntParameter num = new IntParameter("num", true, 0);
-        parser.addParam(num);
+        Parser parser = new ParserBuilder()
+                .AddParameter("num", true, 0, ParserBuilder.INT)
+                .build();
         parser.parse(arguments);
-        int number = num.getParsedValue();
+        int number = parser.getParam("num",ParserBuilder.INT).getParsedValue();
         return Map.of("number", number);
     }
 
@@ -148,12 +146,11 @@ public class Scenarios {
      *       out of the box and requires a custom type to be defined.
      */
     static Map<String, Object> date(String arguments) {
-        //TODO: Parse arguments and extract values.
-        Parser parser = new Parser();
-        LocalDateParameter localDate = new LocalDateParameter("localDate", true, 0);
-        parser.addParam(localDate);
+        Parser parser = new ParserBuilder()
+                .AddParameter("localDate", true, 0, ParserBuilder.LOCAL_DATE)
+                .build();
         parser.parse(arguments);
-        LocalDate date = localDate.getParsedValue();
+        LocalDate date = parser.getParam("localDate",ParserBuilder.LOCAL_DATE).getParsedValue();
         return Map.of("date", date);
     }
 
