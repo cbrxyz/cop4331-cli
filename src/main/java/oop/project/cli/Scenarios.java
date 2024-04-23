@@ -1,5 +1,7 @@
 package oop.project.cli;
 
+import org.checkerframework.checker.units.qual.N;
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +38,13 @@ public class Scenarios {
      *  - {@code left: <your integer type>}
      *  - {@code right: <your integer type>}
      */
+
+//    private static Map<String, Object> add(String arguments) {
+//        //TODO: Parse arguments and extract values.
+//        int left = 0; //or BigInteger, etc.
+//        int right = 0;
+//        return Map.of("left", left, "right", right);
+//    }
     private static Map<String, Object> add(String arguments) {
         Parser parser = new Parser();
         IntParameter leftParam = new IntParameter("left", true, 0);
@@ -55,10 +64,31 @@ public class Scenarios {
      *       this as a non-optional decimal value using a default of 0.0.
      *  - {@code right: <your decimal type>} (required)
      */
+
+//    static Map<String, Object> sub(String arguments) {
+//        //TODO: Parse arguments and extract values.
+//        Optional<Double> left = Optional.empty();
+//        double right = 0.0;
+//        return Map.of("left", left, "right", right);
+//    }
     static Map<String, Object> sub(String arguments) {
         //TODO: Parse arguments and extract values.
+        Parser parser = new Parser();
+        DoubleParameter leftParam = new DoubleParameter("left", false, 0);
+        DoubleParameter rightParam = new DoubleParameter("right", true, 0);
+        Parser namedLeft = new Parser();
+        namedLeft.addParam(leftParam);
+        parser.addNamedParam(new NamedParameter("left", false, namedLeft));
+        Parser namedRight = new Parser();
+        namedRight.addParam(rightParam);
+        parser.addNamedParam(new NamedParameter("right", true, namedRight));
+        parser.parse(arguments);
+
         Optional<Double> left = Optional.empty();
-        double right = 0.0;
+        if (leftParam.getParsedValue() != null) {
+            left = Optional.of(leftParam.getParsedValue());
+        }
+        Double right = rightParam.getParsedValue();
         return Map.of("left", left, "right", right);
     }
 
@@ -66,9 +96,18 @@ public class Scenarios {
      * Takes one positional argument:
      *  - {@code number: <your integer type>} where {@code number >= 0}
      */
+//    static Map<String, Object> sqrt(String arguments) {
+//        //TODO: Parse arguments and extract values.
+//        int number = 0;
+//        return Map.of("number", number);
+//    }
     static Map<String, Object> sqrt(String arguments) {
         //TODO: Parse arguments and extract values.
-        int number = 0;
+        Parser parser = new Parser();
+        IntParameter num = new IntParameter("num", true, 0);
+        parser.addParam(num);
+        parser.parse(arguments);
+        int number = num.getParsedValue();
         return Map.of("number", number);
     }
 
