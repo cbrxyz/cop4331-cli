@@ -74,11 +74,11 @@ public class Scenarios {
     static Map<String, Object> sub(String arguments) {
         //TODO: Parse arguments and extract values.
         Parser parser = new Parser();
-        DoubleParameter leftParam = new DoubleParameter("left", false, 0);
+        DoubleParameter leftParam = new DoubleParameter("left", true, 0);
         DoubleParameter rightParam = new DoubleParameter("right", true, 0);
         Parser namedLeft = new Parser();
         namedLeft.addParam(leftParam);
-        parser.addNamedParam(new NamedParameter("left", false, namedLeft));
+        parser.addNamedParam(new NamedParameter("left", true, namedLeft));
         Parser namedRight = new Parser();
         namedRight.addParam(rightParam);
         parser.addNamedParam(new NamedParameter("right", true, namedRight));
@@ -117,9 +117,26 @@ public class Scenarios {
      *     - Note: Not all projects support subcommands, but if yours does you
      *       may want to take advantage of this scenario for that.
      */
+
+//    static Map<String, Object> calc(String arguments) {
+//        //TODO: Parse arguments and extract values.
+//        String subcommand = "";
+//        return Map.of("subcommand", subcommand);
+//    }
     static Map<String, Object> calc(String arguments) {
         //TODO: Parse arguments and extract values.
-        String subcommand = "";
+
+        Parser parser = new Parser();
+        StringParameter subArg = new StringParameter("subArg", false, 0);
+        parser.addParam(subArg);
+        parser.parse(arguments);
+
+        Optional<String> subcommand = Optional.empty();
+        if (subArg.getParsedValue() != null) {
+            subcommand = Optional.of(subArg.getParsedValue());
+        }
+
+//        String subcommand = subArg.getParsedValue();
         return Map.of("subcommand", subcommand);
     }
 
@@ -132,7 +149,11 @@ public class Scenarios {
      */
     static Map<String, Object> date(String arguments) {
         //TODO: Parse arguments and extract values.
-        LocalDate date = LocalDate.EPOCH;
+        Parser parser = new Parser();
+        LocalDateParameter localDate = new LocalDateParameter("localDate", true, 0);
+        parser.addParam(localDate);
+        parser.parse(arguments);
+        LocalDate date = localDate.getParsedValue();
         return Map.of("date", date);
     }
 
