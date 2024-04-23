@@ -52,8 +52,11 @@ public class Parser {
         // Next, associate each part with a parameter or flag
         ArrayList<String> invalidFlags = new ArrayList<>();
         int paramIndex = 0;
-        while (reader.peekNext() != null) {
+        for (int i = 0; i < (parameters.size() + flags.size() + namedParams.size()); i++) {
             String part = reader.peekNext().toString();
+            if (part == null) {
+                throw new IllegalArgumentException("Expected argument and did not receive it.");
+            }
             if (part.startsWith("--")) {
                 // This is a flag
                 String flagName = part.substring(2);
@@ -65,20 +68,17 @@ public class Parser {
                 } else if (namedP == null) {
                     flag.parse();
                 } else {
-                    try {
-                        reader.next();
-                        namedP.parse();
-                    } catch (IllegalArgumentException ignored) {
-                    }
+                    reader.next();
+                    namedP.parse();
                 }
             } else {
                 // This is a parameter
-                if (paramIndex >= parameters.size()) {
-                    throw new IllegalArgumentException("Too many parameters");
-                }
                 parameters.get(paramIndex).parse();
                 paramIndex++;
             }
+        }
+        if (reader.peekNext() != null) {
+            throw new IllegalArgumentException("Too many parameters");
         }
     }
 }
