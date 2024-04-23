@@ -34,5 +34,5 @@ public abstract class Component<T> {
     /**
      * Parse the raw value and set the value field.
      */
-    public abstract void parse(String rawInput);
+    public abstract void parse();
 }

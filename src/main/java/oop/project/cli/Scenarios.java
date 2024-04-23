@@ -1,5 +1,7 @@
 package oop.project.cli;
 
+import org.checkerframework.checker.units.qual.N;
+
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -37,14 +39,13 @@ public class Scenarios {
      *  - {@code right: <your integer type>}
      */
     private static Map<String, Object> add(String arguments) {
-        Parser parser = new Parser();
-        IntParameter leftParam = new IntParameter("left", true, 0);
-        IntParameter rightParam = new IntParameter("right", true, 1);
-        parser.addParam(leftParam);
-        parser.addParam(rightParam);
+        Parser parser = new ParserBuilder()
+                .AddParameter("left", true, 0, ParserBuilder.INT)
+                .AddParameter("right", true, 1, ParserBuilder.INT)
+                .build();
         parser.parse(arguments);
-        int left = leftParam.getParsedValue();
-        int right = rightParam.getParsedValue();
+        int left = parser.getParam("left",ParserBuilder.INT).getParsedValue();
+        int right = parser.getParam("right",ParserBuilder.INT).getParsedValue();
         return Map.of("left", left, "right", right);
     }
 
@@ -55,11 +56,25 @@ public class Scenarios {
      *       this as a non-optional decimal value using a default of 0.0.
      *  - {@code right: <your decimal type>} (required)
      */
+
     static Map<String, Object> sub(String arguments) {
-        //TODO: Parse arguments and extract values.
-        Optional<Double> left = Optional.empty();
-        double right = 0.0;
-        return Map.of("left", left, "right", right);
+        Parser parser = new ParserBuilder()
+                .AddNamedParameter("left", false, new ParserBuilder()
+                        .AddParameter("num", true, 0, ParserBuilder.DOUBLE)
+                        .build())
+                .AddNamedParameter("right", false, new ParserBuilder()
+                        .AddParameter("num", true, 0, ParserBuilder.DOUBLE)
+                        .build())
+                .build();
+        parser.parse(arguments);
+
+        DoubleParameter leftParam = parser.getNamedParam("left").getParsedValue().getParam("num",ParserBuilder.DOUBLE);
+        DoubleParameter rightParam = parser.getNamedParam("right").getParsedValue().getParam("num",ParserBuilder.DOUBLE);
+        Double right = rightParam.getParsedValue();
+        if (leftParam.getParsedValue() != null) {
+            return Map.of("left", leftParam.getParsedValue(), "right", right);
+        }
+        return Map.of("left", Optional.empty(), "right", right);
     }
 
     /**
@@ -67,8 +82,11 @@ public class Scenarios {
      *  - {@code number: <your integer type>} where {@code number >= 0}
      */
     static Map<String, Object> sqrt(String arguments) {
-        //TODO: Parse arguments and extract values.
-        int number = 0;
+        Parser parser = new ParserBuilder()
+                .AddParameter("num", true, 0, ParserBuilder.INT)
+                .build();
+        parser.parse(arguments);
+        int number = parser.getParam("num",ParserBuilder.INT).getParsedValue();
         return Map.of("number", number);
     }
 
@@ -79,9 +97,18 @@ public class Scenarios {
      *       may want to take advantage of this scenario for that.
      */
     static Map<String, Object> calc(String arguments) {
-        //TODO: Parse arguments and extract values.
-        String subcommand = "";
-        return Map.of("subcommand", subcommand);
+        Parser parser = new ParserBuilder()
+                .AddParameter("calcArg", false, 0, ParserBuilder.STRING)
+                .build();
+        parser.parse(arguments);
+
+        if (parser.getParam("calcArg",ParserBuilder.STRING).getParsedValue() != null) {
+            String subcommand = parser.getParam("calcArg",ParserBuilder.STRING).getParsedValue();
+            return Map.of("subcommand", subcommand);
+        }
+        return Map.of("subcommand", Optional.empty());
+
+//        String subcommand = subArg.getParsedValue();
     }
 
     /**
@@ -92,8 +119,11 @@ public class Scenarios {
      *       out of the box and requires a custom type to be defined.
      */
     static Map<String, Object> date(String arguments) {
-        //TODO: Parse arguments and extract values.
-        LocalDate date = LocalDate.EPOCH;
+        Parser parser = new ParserBuilder()
+                .AddParameter("localDate", true, 0, ParserBuilder.LOCAL_DATE)
+                .build();
+        parser.parse(arguments);
+        LocalDate date = parser.getParam("localDate",ParserBuilder.LOCAL_DATE).getParsedValue();
         return Map.of("date", date);
     }
 
