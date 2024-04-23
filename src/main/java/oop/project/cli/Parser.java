@@ -76,6 +76,7 @@ public class Parser {
                         throw new IllegalArgumentException("Expected argument and did not receive it.");
                     }
                 }
+                return;
             }
             String part = t.toString();
             if (part.startsWith("--")) {

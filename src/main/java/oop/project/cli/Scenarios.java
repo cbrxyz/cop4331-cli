@@ -72,24 +72,23 @@ public class Scenarios {
 //        return Map.of("left", left, "right", right);
 //    }
     static Map<String, Object> sub(String arguments) {
-        //TODO: Parse arguments and extract values.
-        Parser parser = new Parser();
-        DoubleParameter leftParam = new DoubleParameter("left", true, 0);
-        DoubleParameter rightParam = new DoubleParameter("right", true, 0);
-        Parser namedLeft = new Parser();
-        namedLeft.addParam(leftParam);
-        parser.addNamedParam(new NamedParameter("left", true, namedLeft));
-        Parser namedRight = new Parser();
-        namedRight.addParam(rightParam);
-        parser.addNamedParam(new NamedParameter("right", true, namedRight));
+        Parser parser = new ParserBuilder()
+                .AddNamedParameter("left", false, new ParserBuilder()
+                        .AddParameter("num", true, 0, ParserBuilder.DOUBLE)
+                        .build())
+                .AddNamedParameter("right", false, new ParserBuilder()
+                        .AddParameter("num", true, 0, ParserBuilder.DOUBLE)
+                        .build())
+                .build();
         parser.parse(arguments);
 
-        Optional<Double> left = Optional.empty();
-        if (leftParam.getParsedValue() != null) {
-            left = Optional.of(leftParam.getParsedValue());
-        }
+        DoubleParameter leftParam = parser.getNamedParam("left").getParsedValue().getParam("num",ParserBuilder.DOUBLE);
+        DoubleParameter rightParam = parser.getNamedParam("right").getParsedValue().getParam("num",ParserBuilder.DOUBLE);
         Double right = rightParam.getParsedValue();
-        return Map.of("left", left, "right", right);
+        if (leftParam.getParsedValue() != null) {
+            return Map.of("left", leftParam.getParsedValue(), "right", right);
+        }
+        return Map.of("left", Optional.empty(), "right", right);
     }
 
     /**
