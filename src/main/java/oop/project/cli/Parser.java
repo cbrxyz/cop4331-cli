@@ -53,10 +53,11 @@ public class Parser {
         ArrayList<String> invalidFlags = new ArrayList<>();
         int paramIndex = 0;
         for (int i = 0; i < (parameters.size() + flags.size() + namedParams.size()); i++) {
-            String part = reader.peekNext().toString();
-            if (part == null) {
+            Token t = reader.peekNext();
+            if (t == null) {
                 throw new IllegalArgumentException("Expected argument and did not receive it.");
             }
+            String part = t.toString();
             if (part.startsWith("--")) {
                 // This is a flag
                 String flagName = part.substring(2);
